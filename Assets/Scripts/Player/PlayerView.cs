@@ -35,8 +35,8 @@ public class PlayerView : MonoBehaviour
         swipeLeft = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow);
         swipeRight = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
         swipeDown = Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow);
-        jump = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
-        if (jump)
+        swipeUp = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
+        if (swipeUp)
         {
             Jump();
         }
@@ -87,10 +87,12 @@ public class PlayerView : MonoBehaviour
 
     public void Jump()
     {
+        Debug.Log(c_Controller.isGrounded);
         if (c_Controller.isGrounded)
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
-            {
+            {   
+
                 animator.Play("Run");
                 inJump = false;
             }

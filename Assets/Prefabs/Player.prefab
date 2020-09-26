@@ -1168,9 +1168,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   swipeLeft: 0
   swipeRight: 0
+  swipeDown: 0
+  swipeUp: 0
+  inJump: 0
+  inSlide: 0
+  jump: 0
   p_Side: 1
   p_xValue: 3
   dodgeSpeed: 5
+  jumpForce: 22
 --- !u!95 &3972467201543122464
 Animator:
   serializedVersion: 3
