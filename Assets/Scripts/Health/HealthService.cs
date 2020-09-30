@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class HealthService : MonoGenericSingleton<HealthService>
 {
-    //private int maxHealthCount = 1;
     private int minHealthCount = 1;
     private int healthCount = 3;
-    //private int healthValue = 1;
 
     protected override void Awake()
     {

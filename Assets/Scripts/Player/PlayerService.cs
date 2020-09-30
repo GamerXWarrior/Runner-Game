@@ -31,7 +31,7 @@ public class PlayerService : MonoGenericSingleton<PlayerService>
 
     private void OnPlayerDead()
     {
-
+        player[0].DestroyPlayer();
     }
 
     public void StartGame()

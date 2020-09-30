@@ -4,5 +4,12 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
-    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.GetComponent<PlayerView>())
+        {
+            UIService.Instance.UpdateCoinsCount();
+            gameObject.SetActive(false);
+        }
+    }
 }

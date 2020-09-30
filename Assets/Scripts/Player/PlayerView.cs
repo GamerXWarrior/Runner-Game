@@ -145,20 +145,9 @@ public class PlayerView : MonoBehaviour
 
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+    public void DestroyView()
     {
-        if (hit.gameObject.GetComponent<Obstacles>())
-        {
-            EventService.Instance.PlayerDamage();
-            Destroy(hit.gameObject);
-        }
-        if (hit.gameObject.GetComponent<Coin>())
-        {
-            Debug.Log("coin hitted");
-           UIService.Instance.UpdateCoinsCount();
-            Destroy(hit.gameObject);
-        }
-
+        Destroy(gameObject);
     }
 
     public float GetPlayerInitPos()

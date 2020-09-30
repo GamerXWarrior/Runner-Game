@@ -27,9 +27,9 @@ public class UIService : MonoGenericSingleton<UIService>
     public Transform idlePlayer;
     public GameObject mainMenuUi;
     public GameObject gameUi;
-    public GameObject pauseUi;
+    public PauseMenu pauseUi;
+    public GameOverUi gameOverUi;
     public Vector3 camPos;
-    //public GameObject gameOverUi;
 
     protected override void Awake()
     {
@@ -41,6 +41,7 @@ public class UIService : MonoGenericSingleton<UIService>
         base.Start();
         Camera.main.transform.position = camPos;
         EventService.Instance.PlayerSpawn += OnPlayerSpawned;
+        EventService.Instance.PlayerDead += OnPlayerDead;
         idlePlayer.gameObject.SetActive(true);
         startButton.onClick.AddListener(() => StartGame());
         pauseButton.onClick.AddListener(() => OnPause());
@@ -48,7 +49,7 @@ public class UIService : MonoGenericSingleton<UIService>
     }
 
     private void StartGame()
-    {   
+    {
 
         PlayerService.Instance.StartGame();
     }
@@ -58,7 +59,7 @@ public class UIService : MonoGenericSingleton<UIService>
         Debug.Log("game chaalu");
         ChangeUi();
         timer = 0f;
-        timerText.text = "Time: " + timer/3600 + ":" + (timer%3600)/60 + ":" + (timer%3600)%60;
+        timerText.text = "Time: " + timer / 3600 + ":" + (timer % 3600) / 60 + ":" + (timer % 3600) % 60;
         player = PlayerService.Instance.GetCurrentPlayer();
         if (player != null)
         {
@@ -80,14 +81,15 @@ public class UIService : MonoGenericSingleton<UIService>
         gameUi.gameObject.SetActive(true);
     }
 
-    //public int GetScoreDetails()
-    //{
-    //    return 
-    //}
+    
 
-    public void OnPlayerDied()
+    public void OnPlayerDead()
     {
         finishPos = PlayerService.Instance.GetPlayerFinishPos();
+        gameState = GameStates.End;
+        gameUi.gameObject.SetActive(false);
+        gameOverUi.gameObject.SetActive(true);
+        gameOverUi.SetResult(distanceCount, timer, coinCount);
     }
 
     public void UpdateHealthCount()
@@ -111,12 +113,13 @@ public class UIService : MonoGenericSingleton<UIService>
         {
             if (player != null)
             {
-                distanceText.text = "" + Mathf.Floor(-player.transform.position.z);
+                distanceCount = Mathf.Floor(-player.transform.position.z);
+                distanceText.text = "" + Mathf.Floor(distanceCount);
+
                 timer += Time.deltaTime;
                 hours = Mathf.Floor(timer / 3600);
                 minutes = Mathf.Floor((timer % 3600) / 60);
                 seconds = Mathf.Floor((timer % 3600) % 60);
-                //timerText.text = "" + Mathf.Floor(timer);
                 timerText.text = "" + hours + ":" + minutes + ":" + seconds;
             }
         }

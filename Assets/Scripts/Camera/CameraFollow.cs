@@ -5,9 +5,14 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     private PlayerView player;
+    private Vector3 initPos;
+    private Quaternion initRot;
     void Start()
     {
         EventService.Instance.PlayerSpawn += OnPlayerSpawned;
+        EventService.Instance.PlayerDead += OnPlayerDead;
+        initPos = transform.position;
+        initRot = transform.rotation;
     }
 
     public void OnPlayerSpawned()
@@ -24,5 +29,11 @@ public class CameraFollow : MonoBehaviour
             Debug.Log("Player is null");
         }
     }
-   
+
+    private void OnPlayerDead()
+    {
+        transform.parent = null;
+    }
+
+
 }

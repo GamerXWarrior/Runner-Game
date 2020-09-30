@@ -22,6 +22,11 @@ public class PlayerController
         return playerView.GetPlayerInitPos();
     }
 
+    public void DestroyPlayer()
+    {
+        playerView.DestroyView();
+    }
+
     public float GetPlayerEndPos()
     {
         return playerView.GetPlayerLastPos();

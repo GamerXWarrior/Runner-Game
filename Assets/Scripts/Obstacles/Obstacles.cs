@@ -4,21 +4,12 @@ using UnityEngine;
 
 public class Obstacles : MonoBehaviour
 {
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.GetComponent<PlayerView>())
+        if (other.gameObject.GetComponent<PlayerView>())
         {
-            Debug.Log("lada");
-            PlayerService.Instance.TakeDamage();
-            //StartCoroutine(DestroyObstacle());
-            Destroy(gameObject);
+            EventService.Instance.PlayerDamage();
+            gameObject.SetActive(true);
         }
     }
-
-   
-    //IEnumerator DestroyObstacle()
-    //{
-    //    yield return new WaitForSeconds(1f);
-    //    Destroy(gameObject);
-    //}
 }
