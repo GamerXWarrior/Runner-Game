@@ -11,7 +11,10 @@ public class PlayerView : MonoBehaviour
     private PlayerController p_Controller;
     private PlayerModel p_model;
     Vector3 velocity;
-    public bool swipeLeft, swipeRight, swipeDown, swipeUp, inJump,inSlide;
+    [HideInInspector]
+    public bool swipeLeft, swipeRight, swipeDown, swipeUp, inJump, inSlide;
+    [SerializeField]
+    private Vector3 playerCurrPos;
     public bool jump;
     public SIDE p_Side;
     private float newXPos = 0f;
@@ -19,15 +22,26 @@ public class PlayerView : MonoBehaviour
     private Animator animator;
     private float x;
     public float dodgeSpeed;
-    public float jumpForce =5f;
+    public float jumpForce = 5f;
     private float y;
+    private float slideCounter;
+    private float colHeight;
+    private float colCenterY;
+    private float colRadius;
+    private float spawnerPos;
+
 
     void Start()
     {
+        spawnerPos = transform.position.z;
         p_Side = SIDE.Mid;
         c_Controller = GetComponent<CharacterController>();
+        c_Controller.detectCollisions = true;
         animator = GetComponent<Animator>();
         EventService.Instance.OnPlayerSpawn();
+        colCenterY = c_Controller.center.y;
+        colHeight = c_Controller.height;
+        colRadius = c_Controller.radius;
     }
 
     void Update()
@@ -36,14 +50,7 @@ public class PlayerView : MonoBehaviour
         swipeRight = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
         swipeDown = Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow);
         swipeUp = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
-        if (swipeUp)
-        {
-            Jump();
-        }
-        if (swipeDown)
-        {
-            animator.Play("Slide");
-        }
+
         if (swipeLeft)
         {
             if (p_Side == SIDE.Mid)
@@ -74,44 +81,101 @@ public class PlayerView : MonoBehaviour
                 animator.Play("Right");
             }
         }
-        Vector3 moveVector = new Vector3(x - transform.position.x, y*Time.deltaTime, 0);
+        Vector3 moveVector = new Vector3(x - transform.position.x, y * Time.deltaTime, -speed * Time.deltaTime);
         x = Mathf.Lerp(x, newXPos, Time.deltaTime * dodgeSpeed);
         c_Controller.Move(moveVector);
-        //c_Controller.Move((x - transform.position.x) * Vector3.right);
-
-        Vector3 move = transform.forward * speed;
-        c_Controller.Move(move * Time.deltaTime);
-        velocity.y -= gravity * Time.deltaTime;
-        c_Controller.Move(velocity * Time.deltaTime);
+        Jump();
+        Slide();
+        playerCurrPos = transform.position;
     }
 
-    public void Jump()
+    public void Slide()
     {
-        Debug.Log(c_Controller.isGrounded);
-        if (c_Controller.isGrounded)
+        if (swipeDown)
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
-            {   
-
-                animator.Play("Run");
-                inJump = false;
-            }
-            if (swipeUp)
+            Debug.Log(inJump);
+            if (!inJump)
             {
-                y = jumpForce;
-                animator.CrossFadeInFixedTime("Jump",0.1f);
-                inJump = true;
+                animator.CrossFadeInFixedTime("Slide", 0.1f);
+                //animator.Play("Slide");
+                SetSlideParameters();
+                inSlide = true;
             }
             else
             {
-                y -= jumpForce * 2 * Time.deltaTime;
-                if(c_Controller.velocity.y < -0.1f)
-                animator.Play("Run");
+                y -= gravity;
+                if (c_Controller.velocity.y < -0.1f)
+                    animator.Play("Run");
+                inJump = false;
             }
+        }
+    }
+    public void Jump()
+    {
+        if (c_Controller.isGrounded)
+        {
+            inJump = false;
+            if (swipeUp)
+            {
+                y = jumpForce;
+                animator.CrossFadeInFixedTime("Jump", 0.1f);
+                inJump = true;
+            }
+        }
+        else
+        {
+            y -= gravity * 2 * Time.deltaTime;
+            if (c_Controller.velocity.y < -0.1f)
+                animator.Play("Run");
+        }
+    }
+
+    public void TakeDamage()
+    {
+
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.GetComponent<Obstacles>())
+        {
+            EventService.Instance.PlayerDamage();
+            Destroy(hit.gameObject);
+        }
+        if (hit.gameObject.GetComponent<Coin>())
+        {
+            Debug.Log("coin hitted");
+           UIService.Instance.UpdateCoinsCount();
+            Destroy(hit.gameObject);
         }
 
     }
-       
+
+    public float GetPlayerInitPos()
+    {
+        return spawnerPos;
+    }
+
+    public float GetPlayerLastPos()
+    {
+        return playerCurrPos.z;
+    }
+
+    private void SetSlideParameters()
+    {
+        c_Controller.center = new Vector3(0, 18f, 0);
+        c_Controller.radius = 10f;
+        c_Controller.height = 30f;
+        StartCoroutine(ResetSlideParameters());
+    }
+
+    IEnumerator ResetSlideParameters()
+    {
+        yield return new WaitForSeconds(1f);
+        c_Controller.center = new Vector3(0, colCenterY, 0);
+        c_Controller.radius = colRadius;
+        c_Controller.height = colHeight;
+    }
 
     public void InitialiseController(PlayerController controller)
     {

@@ -12,13 +12,12 @@ public class CameraFollow : MonoBehaviour
 
     public void OnPlayerSpawned()
     {
-        Debug.Log("event listened");
-        Debug.Log("Player: " + player);
         player = PlayerService.Instance.GetCurrentPlayer();
         if (player != null)
         {
             transform.parent = player.transform;
-            transform.position = player.transform.position + new Vector3(0, 3f, 4f);
+            transform.position = player.transform.position + new Vector3(0, 2.7f, 4f);
+            transform.rotation = player.transform.rotation;
         }
         else
         {

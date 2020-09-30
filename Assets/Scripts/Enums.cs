@@ -9,3 +9,9 @@ public enum SIDE
     Mid,
     Right
 }
+
+public enum GameStates
+{
+    Started,
+    End
+}

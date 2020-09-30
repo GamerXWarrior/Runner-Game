@@ -13,16 +13,33 @@ public class PlayerService : MonoGenericSingleton<PlayerService>
     {
         base.Awake();
     }
-
+    protected override void Start()
+    {
+        EventService.Instance.TakeDamage += TakeDamage;
+        base.Start();
+    }
     public PlayerView GetCurrentPlayer()
     {
         return player[0].GetPlayerView();
     }
 
-    protected override void Start()
+    public void TakeDamage()
     {
-        base.Start();
+        player[0].TakeDamage();
+    }
+
+    public void StartGame()
+    {
         SpawnPlayer(spawner, 0);
+    }
+
+    public float GetPlayerSpawnPos()
+    {
+        return player[0].GetPlayerStartPos();
+    }
+    public float GetPlayerFinishPos()
+    {
+        return player[0].GetPlayerEndPos();
     }
 
     public void SpawnPlayer(Transform spawner, int playerSerial)

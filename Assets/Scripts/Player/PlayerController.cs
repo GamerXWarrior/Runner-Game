@@ -12,6 +12,21 @@ public class PlayerController
         playerView.SetViewDetails();
     }
 
+    public void TakeDamage()
+    {
+        playerView.TakeDamage();
+    }
+
+    public float GetPlayerStartPos()
+    {
+        return playerView.GetPlayerInitPos();
+    }
+
+    public float GetPlayerEndPos()
+    {
+        return playerView.GetPlayerLastPos();
+    }
+
     public PlayerView GetPlayerView()
     {
         return playerView.GetView();
