@@ -16,6 +16,7 @@ public class PlayerService : MonoGenericSingleton<PlayerService>
     protected override void Start()
     {
         EventService.Instance.TakeDamage += TakeDamage;
+        EventService.Instance.PlayerDead += OnPlayerDead;
         base.Start();
     }
     public PlayerView GetCurrentPlayer()
@@ -26,6 +27,11 @@ public class PlayerService : MonoGenericSingleton<PlayerService>
     public void TakeDamage()
     {
         player[0].TakeDamage();
+    }
+
+    private void OnPlayerDead()
+    {
+
     }
 
     public void StartGame()

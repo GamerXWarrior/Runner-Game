@@ -1172,11 +1172,13 @@ MonoBehaviour:
   swipeUp: 0
   inJump: 0
   inSlide: 0
+  playerCurrPos: {x: 0, y: 0, z: 0}
   jump: 0
   p_Side: 1
   p_xValue: 3
   dodgeSpeed: 5
   jumpForce: 10
+  playerRenderer: {fileID: 7391781061617436296}
 --- !u!95 &3972467201543122464
 Animator:
   serializedVersion: 3

@@ -100,8 +100,6 @@ public class UIService : MonoGenericSingleton<UIService>
         coinsText.text = "" + coinCount;
     }
 
-
-
     private void OnPause()
     {
         pauseUi.gameObject.SetActive(true);

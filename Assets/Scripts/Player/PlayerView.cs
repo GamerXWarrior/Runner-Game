@@ -29,6 +29,7 @@ public class PlayerView : MonoBehaviour
     private float colCenterY;
     private float colRadius;
     private float spawnerPos;
+    public Renderer playerRenderer;
 
 
     void Start()
@@ -132,6 +133,15 @@ public class PlayerView : MonoBehaviour
 
     public void TakeDamage()
     {
+        Invoke("ResetPlayer", 0.02f);
+        playerRenderer.enabled = false;
+        Time.timeScale = 0.01f;
+    }
+
+    private void ResetPlayer()
+    {
+        Time.timeScale = 1;
+        playerRenderer.enabled = true;
 
     }
 
