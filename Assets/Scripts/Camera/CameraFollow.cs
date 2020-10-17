@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class CameraFollow : MonoBehaviour
 {
     private PlayerView player;
     private Vector3 initPos;
     private Quaternion initRot;
+    public CinemachineVirtualCamera cineCam;
     void Start()
     {
         EventService.Instance.PlayerSpawn += OnPlayerSpawned;
@@ -21,7 +23,11 @@ public class CameraFollow : MonoBehaviour
         if (player != null)
         {
             transform.parent = player.transform;
-            transform.position = player.transform.position + new Vector3(0, 2.7f, 4f);
+            //cineCam.m_LookAt = player.transform;
+            cineCam.m_Follow = player.transform.GetChild(0).transform;
+            Debug.Log(cineCam.m_Follow.name);
+            //cineCam.transform.position = new Vector3(0, 5f, 4f);
+            //transform.position = player.transform.position + new Vector3(0, 5f, 4f);
             transform.rotation = player.transform.rotation;
         }
         else
