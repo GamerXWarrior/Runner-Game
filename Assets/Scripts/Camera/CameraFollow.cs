@@ -9,7 +9,8 @@ public class CameraFollow : MonoBehaviour
     private Vector3 initPos;
     private Quaternion initRot;
     public CinemachineVirtualCamera cineCam;
-    void Start()
+
+    private void Start()
     {
         EventService.Instance.PlayerSpawn += OnPlayerSpawned;
         EventService.Instance.PlayerDead += OnPlayerDead;
@@ -20,6 +21,7 @@ public class CameraFollow : MonoBehaviour
     public void OnPlayerSpawned()
     {
         player = PlayerService.Instance.GetCurrentPlayer();
+
         if (player != null)
         {
             transform.parent = player.transform;
@@ -36,10 +38,28 @@ public class CameraFollow : MonoBehaviour
         }
     }
 
+    public void SwipeLeft()
+    {
+        player.SwipeLeft();
+    }
+
+    public void SwipeRight()
+    {
+        player.SwipeRight();
+    }
+
+    public void Slide()
+    {
+        player.Slide();
+    }
+
+    public void Jump()
+    {
+        player.Jump();
+    }
+
     private void OnPlayerDead()
     {
         transform.parent = null;
     }
-
-
 }

@@ -10,11 +10,14 @@ public class PlayerView : MonoBehaviour
     private CharacterController c_Controller;
     private PlayerController p_Controller;
     private PlayerModel p_model;
-    Vector3 velocity;
+    private Vector3 velocity;
+
     [HideInInspector]
     public bool swipeLeft, swipeRight, swipeDown, swipeUp, inJump, inSlide;
+
     [SerializeField]
     private Vector3 playerCurrPos;
+
     public bool jump;
     public SIDE p_Side;
     private float newXPos = 0f;
@@ -31,8 +34,7 @@ public class PlayerView : MonoBehaviour
     private float spawnerPos;
     public Renderer playerRenderer;
 
-
-    void Start()
+    private void Start()
     {
         spawnerPos = transform.position.z;
         p_Side = SIDE.Mid;
@@ -45,60 +47,96 @@ public class PlayerView : MonoBehaviour
         colRadius = c_Controller.radius;
     }
 
-    void Update()
+    private void Update()
     {
         swipeLeft = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow);
         swipeRight = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
         swipeDown = Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow);
         swipeUp = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
 
-        if (swipeLeft)
-        {
-            if (p_Side == SIDE.Mid)
-            {
-                newXPos = p_xValue;
-                p_Side = SIDE.Left;
-                animator.Play("Left");
-            }
-            else if (p_Side == SIDE.Right)
-            {
-                newXPos = 0;
-                p_Side = SIDE.Mid;
-                animator.Play("Left");
-            }
-        }
-        else if (swipeRight)
-        {
-            if (p_Side == SIDE.Mid)
-            {
-                newXPos = -p_xValue;
-                p_Side = SIDE.Right;
-                animator.Play("Right");
-            }
-            else if (p_Side == SIDE.Left)
-            {
-                newXPos = 0;
-                p_Side = SIDE.Mid;
-                animator.Play("Right");
-            }
-        }
+        //if (swipeLeft)
+        //{
+        //    if (p_Side == SIDE.Mid)
+        //    {
+        //        newXPos = p_xValue;
+        //        p_Side = SIDE.Left;
+        //        //animator.Play("Left");
+        //    }
+        //    else if (p_Side == SIDE.Right)
+        //    {
+        //        newXPos = 0;
+        //        p_Side = SIDE.Mid;
+        //        //animator.Play("Left");
+        //    }
+        //}
+        //else if (swipeRight)
+        //{
+        //    if (p_Side == SIDE.Mid)
+        //    {
+        //        newXPos = -p_xValue;
+        //        p_Side = SIDE.Right;
+        //        //animator.Play("Right");
+        //    }
+        //    else if (p_Side == SIDE.Left)
+        //    {
+        //        newXPos = 0;
+        //        p_Side = SIDE.Mid;
+        //        //animator.Play("Right");
+        //    }
+        //}
         Vector3 moveVector = new Vector3(x - transform.position.x, y * Time.deltaTime, -speed * Time.deltaTime);
         x = Mathf.Lerp(x, newXPos, Time.deltaTime * dodgeSpeed);
+        if (c_Controller.isGrounded)
+        {
+            y = -0.11f;
+        }
         c_Controller.Move(moveVector);
-        Jump();
-        Slide();
+        //Jump();
+        //Slide();
         playerCurrPos = transform.position;
+    }
+
+    public void SwipeLeft()
+    {
+        if (p_Side == SIDE.Mid)
+        {
+            newXPos = p_xValue;
+            p_Side = SIDE.Left;
+            //animator.Play("Left");
+        }
+        else if (p_Side == SIDE.Right)
+        {
+            newXPos = 0;
+            p_Side = SIDE.Mid;
+            //animator.Play("Left");
+        }
+    }
+
+    public void SwipeRight()
+    {
+        if (p_Side == SIDE.Mid)
+        {
+            newXPos = -p_xValue;
+            p_Side = SIDE.Right;
+            //animator.Play("Right");
+        }
+        else if (p_Side == SIDE.Left)
+        {
+            newXPos = 0;
+            p_Side = SIDE.Mid;
+            //animator.Play("Right");
+        }
     }
 
     public void Slide()
     {
-        if (swipeDown)
+        //if (swipeDown)
         {
             Debug.Log(inJump);
             if (!inJump)
             {
-                animator.CrossFadeInFixedTime("Slide", 0.1f);
-                //animator.Play("Slide");
+                animator.CrossFadeInFixedTime("Running Slide", 0.1f);
+                animator.Play("Running Slide");
                 SetSlideParameters();
                 inSlide = true;
             }
@@ -106,28 +144,29 @@ public class PlayerView : MonoBehaviour
             {
                 y -= gravity;
                 if (c_Controller.velocity.y < -0.1f)
-                    animator.Play("Run");
+                    animator.Play("Running");
                 inJump = false;
             }
         }
     }
+
     public void Jump()
     {
         if (c_Controller.isGrounded)
         {
-            inJump = false;
-            if (swipeUp)
+            //inJump = true;
+            //if (swipeUp)
             {
                 y = jumpForce;
-                animator.CrossFadeInFixedTime("Jump", 0.1f);
-                inJump = true;
+                animator.CrossFadeInFixedTime("RunningJump", 0.1f);
+                inJump = false;
             }
         }
         else
         {
             y -= gravity * 2 * Time.deltaTime;
             if (c_Controller.velocity.y < -0.1f)
-                animator.Play("Run");
+                animator.Play("Running");
         }
     }
 
@@ -142,7 +181,6 @@ public class PlayerView : MonoBehaviour
     {
         Time.timeScale = 1;
         playerRenderer.enabled = true;
-
     }
 
     public void DestroyView()
@@ -162,15 +200,15 @@ public class PlayerView : MonoBehaviour
 
     private void SetSlideParameters()
     {
-        c_Controller.center = new Vector3(0, 18f, 0);
-        c_Controller.radius = 10f;
-        c_Controller.height = 30f;
+        c_Controller.center = new Vector3(0, 0.35f, 0);
+        c_Controller.radius = 0.25f;
+        c_Controller.height = 0.5f;
         StartCoroutine(ResetSlideParameters());
     }
 
-    IEnumerator ResetSlideParameters()
+    private IEnumerator ResetSlideParameters()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         c_Controller.center = new Vector3(0, colCenterY, 0);
         c_Controller.radius = colRadius;
         c_Controller.height = colHeight;
